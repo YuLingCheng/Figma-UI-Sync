@@ -1,47 +1,46 @@
 <h2>Push your modifications</h2>
 <form id="send-style-changes">
-    <p>Token: <input id="token"/></p>
-    <button type="submit" id="send">Send</button>
+  <p>Token: <input id="token" /></p>
+  <button type="submit" id="send">Send</button>
 </form>
 
 <script>
-  console.log('loading');
+  console.log("loading");
   const getColorsJson = async () => {
     const colorsFileResponse = await fetch(
-      'https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json?ref=sync-colors'
+      "https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json?ref=sync-colors"
     );
 
     return colorsFileResponse.json();
   };
   const getParsedDecodedColors = json => JSON.parse(window.atob(json.content));
-  const updateColorsJsonContent = (sha, newContent) => fetch(
-    'https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json',
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: 'token ${TOKEN}'
-      },
-      body: JSON.stringify({
-        message: 'feat(sync): testing update',
-        content: window.btoa(JSON.stringify(newContent, null, 2)),
-        branch: 'sync-colors',
-        sha
-      })
-    }
-  );
+  const updateColorsJsonContent = (token, sha, newContent) =>
+    fetch(
+      "https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json",
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify({
+          message: "feat(sync): testing update",
+          content: window.btoa(JSON.stringify(newContent, null, 2)),
+          branch: "sync-colors",
+          sha
+        })
+      }
+    );
 
-  document.getElementById('send-style-changes').onsubmit = async e => {
+  document.getElementById("send-style-changes").onsubmit = async e => {
     e.preventDefault();
-    console.log('submit');
+    console.log("submit");
 
     const colorsJson = await getColorsJson();
     const colors = getParsedDecodedColors(colorsJson);
 
-    colors.primary[100] = 'test';
+    colors.primary[100] = "test";
 
-    await updateColorsJsonContent(colorsJson.sha, colors);
-
-    const token = document.getElementById('token').value;
-    parent.postMessage({pluginMessage: {type: 'push-changes', token}}, '*');
+    const token = document.getElementById("token").value;
+    await updateColorsJsonContent(token, colorsJson.sha, colors);
   };
 </script>
