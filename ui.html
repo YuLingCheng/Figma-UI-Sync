@@ -19,12 +19,13 @@
     const colors = JSON.parse(decodedColorsFile);
     colors.primary[100] = "test2";
 
+    const token = document.getElementById("token").value;
     const postResponse = await fetch(
       "https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json",
       {
         method: "PUT",
         headers: {
-          Authorization: "token ${TOKEN}"
+          Authorization: `token ${token}`
         },
         body: JSON.stringify({
           message: "feat(sync): testing update",
@@ -36,7 +37,5 @@
     );
 
     console.log(postResponse);
-    const token = document.getElementById("token").value;
-    parent.postMessage({ pluginMessage: { type: "push-changes", token } }, "*");
   };
 </script>
