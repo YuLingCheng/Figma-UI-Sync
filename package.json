@@ -1,0 +1,22 @@
+{
+  "name": "figma-ui-sync",
+  "version": "1.0.0",
+  "description": "This plugin template uses Typescript. If you are familiar with Javascript, Typescript will look very familiar. In fact, valid Javascript code is already valid Typescript code.",
+  "main": "code.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dashlane/Figma-UI-Sync.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dashlane/Figma-UI-Sync/issues"
+  },
+  "homepage": "https://github.com/Dashlane/Figma-UI-Sync#readme",
+  "dependencies": {
+    "typescript": "^3.6.3"
+  }
+}

@@ -1,17 +1,37 @@
 <h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
+<p>Count: <input id="count" value="0"></p>
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
 <script>
+  document.getElementById('create').onclick = async () => {
+    const textbox = document.getElementById('count');
+    const count = parseInt(textbox.value, 10);
+    const colorsFileResponse = await fetch('https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json?ref=sync-colors');
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
+    const encodedColorsFile = await colorsFileResponse.json();
+    const decodedColorsFile = window.atob(encodedColorsFile.content);
+    const colors = JSON.parse(decodedColorsFile);
+    colors.primary[100] = "test2";
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+    const postResponse = await fetch('https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json', {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'token ${TOKEN}'
+      },
+      body: JSON.stringify({
+        message: 'feat(sync): testing update',
+        content: window.btoa(JSON.stringify(colors, null, "\t")),
+        branch: 'sync-colors',
+        sha: encodedColorsFile.sha
+      })
+    });
+
+    console.log(postResponse)
+    parent.postMessage({pluginMessage: {type: 'create-rectangles', count}}, '*')
+  };
+
+  document.getElementById('cancel').onclick = () => {
+    parent.postMessage({pluginMessage: {type: 'cancel'}}, '*')
+  }
 
 </script>
