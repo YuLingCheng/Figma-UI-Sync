@@ -56,6 +56,12 @@ document.getElementById('validate').onclick = async e => {
     state.userEmail
   );
 };
+document.getElementById('back-step-1').onclick = async e => {
+  e.preventDefault();
+  document.getElementById('send-style-changes').style.display = 'block';
+  document.getElementById('review-panel').innerHTML = '';
+  document.getElementById('confirmation-panel').style.display = 'none';
+};
 
 onmessage = async event => {
   const { pluginMessage } = event.data;
