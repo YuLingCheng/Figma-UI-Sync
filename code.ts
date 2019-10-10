@@ -8,6 +8,17 @@
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__);
 
+// get designer's name
+const getDesignersName = async () => {
+  const name = await figma.clientStorage.getAsync("UX_NAME");
+  figma.ui.postMessage({
+    type: "GET_STORED_UX_NAME",
+    name
+  });
+};
+
+getDesignersName();
+
 // ------ Parse paintstyles -------
 const painStyles = figma.getLocalPaintStyles();
 
@@ -50,15 +61,15 @@ solidPaintStyles.reduce((reducedColors: ParsedColors, solidPainstyle) => {
   return reducedColors;
 }, reducedColors);
 
-console.log(reducedColors);
-
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === "push-changes") {
-    const { token } = msg;
+  console.log(msg);
+  if (msg.type === "SAVE_UX_NAME") {
+    const { uxName } = msg;
+    figma.clientStorage.setAsync("UX_NAME", uxName);
   }
 };
