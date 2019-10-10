@@ -48,13 +48,16 @@ document.getElementById('validate').onclick = async e => {
   ) as HTMLInputElement;
   const token = tokenInput.value;
 
-  await updateRemoteColors(
-    token,
-    state.encodedColorsFile.sha,
-    state.newColors,
-    state.userName,
-    state.userEmail
+  const PRLink = await updateRemoteColors(
+    state.newColors, {
+      token,
+      sha: state.encodedColorsFile.sha,
+      userName: state.userName,
+      userEmail: state.userEmail
+    }
   );
+
+  console.log(PRLink)
 };
 document.getElementById('back-step-1').onclick = async e => {
   e.preventDefault();
