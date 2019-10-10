@@ -7,8 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const BASE_URL = 'https://api.github.com/repos/Dashlane/ui-components';
+const BASE_URL = "https://api.github.com/repos/Dashlane/ui-components";
 export const makeApiCall = (url, config = {}) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(`${BASE_URL}/${url}`, config);
+    const headers = config.token
+        ? {
+            Authorization: `token ${config.token}`
+        }
+        : {};
+    const body = config.body ? JSON.stringify(config.body) : null;
+    const response = yield fetch(`${BASE_URL}/${url}`, Object.assign(Object.assign({}, config), {
+        headers,
+        body
+    }));
     return response.json();
 });
