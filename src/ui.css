@@ -1,0 +1,67 @@
+body {
+  font-family: Inter, Roboto, -apple-system, system-ui, Helvetica, sans-serif;
+}
+main {
+  padding: 10px;
+}
+.main-title {
+  margin-top: 0;
+}
+
+button {
+  padding: 5px 10px;
+  background: lightgray;
+  border: none;
+  font-size: 16px;
+}
+
+#confirmation-panel {
+  display: none;
+}
+
+#review-panel {
+  padding: 10px;
+  border: 1px solid grey;
+  overflow-x: auto;
+}
+.info-icon {
+  display: inline-block;
+  height: 20px;
+  padding: 0 6px;
+  border: white 1px solid;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.info-panel {
+  padding: 10px;
+  background: cornflowerblue;
+  color: white;
+}
+.review-section-title {
+  text-transform: capitalize;
+  border-bottom: 1px solid grey;
+}
+.review-section-title:first-child {
+  margin-top: 0;
+}
+.tone-title,
+.removed-color,
+.added-color,
+.color-value {
+  font-size: 12px;
+}
+.added-color {
+  color: green;
+}
+.removed-color {
+  color: red;
+}
+.color-name {
+  margin-bottom: 5px;
+}
+.validate-section {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
+}
