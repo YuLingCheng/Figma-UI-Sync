@@ -2,20 +2,26 @@
 <h2>Push your modifications</h2>
 <form id="send-style-changes">
   <p>Name: <input id="name-input" /></p>
+  <p>Email: <input id="email-input" /></p>
   <p>Token: <input id="token" /></p>
   <button type="submit" id="send">Send</button>
 </form>
 
 <script>
   let uxName = "";
+  let uxEmail = "";
 
   onmessage = event => {
     const { pluginMessage } = event.data;
     switch (pluginMessage.type) {
-      case "GET_STORED_UX_NAME":
+      case "GET_STORED_UX_INFO":
         if (pluginMessage.name) {
           uxName = pluginMessage.name;
           document.getElementById("name-input").value = uxName;
+        }
+        if (pluginMessage.email) {
+          uxEmail = pluginMessage.email;
+          document.getElementById("email-input").value = uxEmail;
         }
     }
   };
@@ -24,12 +30,14 @@
     e.preventDefault();
 
     const newUxName = document.getElementById("name-input").value;
-    if (newUxName !== uxName) {
+    const newUxEmail = document.getElementById("email-input").value;
+    if (newUxName !== uxName || newUxEmail !== uxEmail) {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "SAVE_UX_NAME",
-            uxName: document.getElementById("name-input").value
+            type: "SAVE_UX_INFO",
+            newUxName,
+            newUxEmail
           }
         },
         "*"
@@ -59,7 +67,7 @@
           branch: "sync-colors",
           committer: {
             name: newUxName,
-            email: "adele.gauvrit-ext@dashlane.com"
+            email: newUxEmail
           },
           sha: encodedColorsFile.sha
         })

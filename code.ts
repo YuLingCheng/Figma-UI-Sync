@@ -10,10 +10,11 @@ figma.showUI(__html__);
 
 // get designer's name
 const getDesignersName = async () => {
-  const name = await figma.clientStorage.getAsync("UX_NAME");
+  const { name, email } = await figma.clientStorage.getAsync("UX_INFO");
   figma.ui.postMessage({
-    type: "GET_STORED_UX_NAME",
-    name
+    type: "GET_STORED_UX_INFO",
+    name,
+    email
   });
 };
 
@@ -68,8 +69,11 @@ figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   console.log(msg);
-  if (msg.type === "SAVE_UX_NAME") {
-    const { uxName } = msg;
-    figma.clientStorage.setAsync("UX_NAME", uxName);
+  if (msg.type === "SAVE_UX_INFO") {
+    const { newUxName, newUxEmail } = msg;
+    figma.clientStorage.setAsync("UX_INFO", {
+      name: newUxName,
+      email: newUxEmail
+    });
   }
 };
