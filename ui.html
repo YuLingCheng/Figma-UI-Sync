@@ -2,20 +2,26 @@
 <h2>Push your modifications</h2>
 <form id="send-style-changes">
   <p>Name: <input id="name-input" /></p>
+  <p>Email: <input id="email-input" /></p>
   <p>Token: <input id="token" /></p>
   <button type="submit" id="send">Send</button>
 </form>
 
 <script>
   let uxName = "";
+  let uxEmail = "";
 
   onmessage = event => {
     const { pluginMessage } = event.data;
     switch (pluginMessage.type) {
-      case "GET_STORED_UX_NAME":
+      case "GET_STORED_UX_INFO":
         if (pluginMessage.name) {
           uxName = pluginMessage.name;
           document.getElementById("name-input").value = uxName;
+        }
+        if (pluginMessage.email) {
+          uxEmail = pluginMessage.email;
+          document.getElementById("email-input").value = uxEmail;
         }
     }
   };
@@ -28,7 +34,7 @@
     return colorsFileResponse.json();
   };
   const getParsedDecodedColors = json => JSON.parse(window.atob(json.content));
-  const updateColorsJsonContent = (token, sha, newContent, uxName) =>
+  const updateColorsJsonContent = (token, sha, newContent, uxName, uxEmail) =>
     fetch(
       "https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json",
       {
@@ -42,7 +48,7 @@
           branch: "sync-colors",
           committer: {
             name: uxName,
-            email: "adele.gauvrit-ext@dashlane.com"
+            email: uxEmail
           },
           sha
         })
@@ -53,12 +59,14 @@
     e.preventDefault();
 
     const newUxName = document.getElementById("name-input").value;
-    if (newUxName !== uxName) {
+    const newUxEmail = document.getElementById("email-input").value;
+    if (newUxName !== uxName || newUxEmail !== uxEmail) {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "SAVE_UX_NAME",
-            uxName: document.getElementById("name-input").value
+            type: "SAVE_UX_INFO",
+            newUxName,
+            newUxEmail
           }
         },
         "*"
@@ -71,6 +79,12 @@
     colors.primary[100] = "test";
 
     const token = document.getElementById("token").value;
-    await updateColorsJsonContent(token, colorsJson.sha, colors, uxName);
+    await updateColorsJsonContent(
+      token,
+      colorsJson.sha,
+      colors,
+      newUxName,
+      newUxEmail
+    );
   };
 </script>
