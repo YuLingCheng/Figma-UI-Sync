@@ -54,9 +54,13 @@
           Authorization: `token ${token}`
         },
         body: JSON.stringify({
-          message: "feat(sync): testing update",
+          message: "feat(sync): testing committer",
           content: window.btoa(JSON.stringify(colors, null, "\t")),
           branch: "sync-colors",
+          committer: {
+            name: newUxName,
+            email: "adele.gauvrit-ext@dashlane.com"
+          },
           sha: encodedColorsFile.sha
         })
       }
