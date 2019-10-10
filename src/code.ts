@@ -11,11 +11,20 @@ figma.showUI(__html__, { width: 800, height: 700 });
 
 // get user's info
 const getUserInfo = async () => {
-  const { name, email } = await figma.clientStorage.getAsync('USER_INFO');
+  const {
+    name,
+    email,
+    repository,
+    colorsFilepath,
+    branchRef
+  } = await figma.clientStorage.getAsync('USER_INFO');
   figma.ui.postMessage({
     type: 'GET_STORED_USER_INFO',
     name,
-    email
+    email,
+    repository,
+    colorsFilepath,
+    branchRef
   });
 };
 
@@ -28,10 +37,13 @@ figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === 'SAVE_USER_INFO') {
-    const { newUserName, newUserEmail } = msg;
+    const { userName, userEmail, repository, colorsFilepath, branchRef } = msg;
     figma.clientStorage.setAsync('USER_INFO', {
-      name: newUserName,
-      email: newUserEmail
+      name: userName,
+      email: userEmail,
+      repository,
+      colorsFilepath,
+      branchRef
     });
     return;
   }

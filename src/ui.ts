@@ -1,9 +1,10 @@
 import { detailedDiff } from 'deep-object-diff';
 import getOldColors from './services/getOldColors';
 import isColorChange from './services/isColorChange';
-import './ui.css';
 import displayReviewPanel from './views/review';
 import updateRemoteColors from './services/updateRemoteColors';
+import './ui.css';
+import './views/loader.css';
 
 const state = {
   newColors: {},
@@ -12,31 +13,44 @@ const state = {
   },
   userName: '',
   userEmail: '',
-  commitSha: 'b1b2ec91017645a628f488c8b79d611e2173276f'
+  repository: '',
+  colorsFilepath: '',
+  branchRef: ''
 };
 
 const nameInput = document.getElementById('name-input') as HTMLInputElement;
 const emailInput = document.getElementById('email-input') as HTMLInputElement;
+const repositoryInput = document.getElementById(
+  'repository-input'
+) as HTMLInputElement;
+const colorsFilepathInput = document.getElementById(
+  'colorsfilepath-input'
+) as HTMLInputElement;
+const branchRefInput = document.getElementById(
+  'branchref-input'
+) as HTMLInputElement;
 
 document.getElementById('send-style-changes').onsubmit = e => {
   e.preventDefault();
   // update user info
-  const newUserName = nameInput.value;
-  const newUserEmail = emailInput.value;
-  if (newUserName !== state.userName || newUserEmail !== state.userEmail) {
-    state.userName = newUserName;
-    state.userEmail = newUserEmail;
-    parent.postMessage(
-      {
-        pluginMessage: {
-          type: 'SAVE_USER_INFO',
-          newUserName,
-          newUserEmail
-        }
-      },
-      '*'
-    );
-  }
+  state.userName = nameInput.value;
+  state.userEmail = emailInput.value;
+  state.repository = repositoryInput.value;
+  state.colorsFilepath = colorsFilepathInput.value;
+  state.branchRef = branchRefInput.value;
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: 'SAVE_USER_INFO',
+        userName: state.userName,
+        userEmail: state.userEmail,
+        repository: state.repository,
+        colorsFilepath: state.colorsFilepath,
+        branchRef: state.branchRef
+      }
+    },
+    '*'
+  );
   // get new colors
   parent.postMessage({ pluginMessage: { type: 'GET_NEW_COLORS' } }, '*');
 };
@@ -51,16 +65,19 @@ document.getElementById('validate').onclick = async e => {
   ) as HTMLInputElement;
   const token = tokenInput.value;
 
-  // const PRLink = await updateRemoteColors(state.newColors, {
-  //   token,
-  //   sha: state.encodedColorsFile.sha,
-  //   userName: state.userName,
-  //   userEmail: state.userEmail
-  // });
-
-  const PRLink = 'https://github.com/Dashlane/Figma-UI-Sync';
-
   document.getElementById('confirmation-panel').style.display = 'none';
+  document.getElementById('loader-panel').style.display = 'block';
+  const PRLink = await updateRemoteColors(state.newColors, {
+    token,
+    sha: state.encodedColorsFile.sha,
+    userName: state.userName,
+    userEmail: state.userEmail,
+    repository: state.repository,
+    colorsFilepath: state.colorsFilepath,
+    branchRef: state.branchRef
+  });
+
+  document.getElementById('loader-panel').style.display = 'none';
   document.getElementById('success-panel').style.display = 'block';
   const txtArea = document.getElementById(
     'pull-request-input'
@@ -70,18 +87,19 @@ document.getElementById('validate').onclick = async e => {
   document.getElementById('pull-request-link').textContent = PRLink;
 };
 
-document.getElementById('back-step-1').onclick = async e => {
-  e.preventDefault();
-  document.getElementById('send-style-changes').style.display = 'block';
-  document.getElementById('review-panel').innerHTML = '';
-  document.getElementById('confirmation-panel').style.display = 'none';
-};
-document.getElementById('back-step-1-bis').onclick = async e => {
-  e.preventDefault();
+const goBackToStep1 = () => {
   document.getElementById('send-style-changes').style.display = 'block';
   document.getElementById('review-panel').innerHTML = '';
   document.getElementById('confirmation-panel').style.display = 'none';
   document.getElementById('success-panel').style.display = 'none';
+};
+document.getElementById('back-step-1').onclick = async e => {
+  e.preventDefault();
+  goBackToStep1();
+};
+document.getElementById('back-step-1-bis').onclick = async e => {
+  e.preventDefault();
+  goBackToStep1();
 };
 
 document.getElementById('copy-url-button').addEventListener('click', e => {
@@ -117,10 +135,26 @@ onmessage = async event => {
         state.userEmail = pluginMessage.email;
         emailInput.value = state.userEmail;
       }
+      if (pluginMessage.repository) {
+        state.repository = pluginMessage.repository;
+        repositoryInput.value = state.repository;
+      }
+      if (pluginMessage.colorsFilepath) {
+        state.colorsFilepath = pluginMessage.colorsFilepath;
+        colorsFilepathInput.value = state.colorsFilepath;
+      }
+      if (pluginMessage.branchRef) {
+        state.branchRef = pluginMessage.branchRef;
+        colorsFilepathInput.value = state.branchRef;
+      }
       break;
     case 'NEW_COLORS':
       state.newColors = pluginMessage.newColors;
-      const { oldColors, encodedColorsFile } = await getOldColors();
+      const { oldColors, encodedColorsFile } = await getOldColors(
+        state.repository,
+        state.colorsFilepath,
+        state.branchRef
+      );
       state.encodedColorsFile = encodedColorsFile;
 
       const colorDiff = detailedDiff(oldColors, state.newColors);

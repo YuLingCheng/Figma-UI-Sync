@@ -1,22 +1,26 @@
-import { makeApiCall } from "./fetch";
+import { makeApiCall } from './fetch';
 
 const generateBranchName = () =>
   `refs/heads/update-color-${Math.random()
     .toString(36)
     .substr(2, 16)}`;
 
-const getLastCommitSha = async token => {
-  const response = await makeApiCall(`git/matching-refs/heads/master`, {
-    token
-  });
+const getLastCommitSha = async (token, repository, branchRef) => {
+  const response = await makeApiCall(
+    `git/matching-refs/heads/${branchRef}`,
+    repository,
+    {
+      token
+    }
+  );
   return response[0].object.sha;
 };
 
-const createBranch = async (branchName, token) => {
-  const sha = await getLastCommitSha(token);
+const createBranch = async (branchName, token, repository, branchRef) => {
+  const sha = await getLastCommitSha(token, repository, branchRef);
 
-  return makeApiCall(`git/refs`, {
-    method: "POST",
+  return makeApiCall(`git/refs`, repository, {
+    method: 'POST',
     token,
     body: {
       ref: branchName,
@@ -28,16 +32,18 @@ const createBranch = async (branchName, token) => {
 const updateColorsJsonContent = (
   sha,
   newContent,
+  repository,
+  colorsFilepath,
   branch,
   token,
   userName,
   userEmail
 ) =>
-  makeApiCall(`contents/src/globals/colors.json`, {
-    method: "PUT",
+  makeApiCall(`contents/${colorsFilepath}`, repository, {
+    method: 'PUT',
     token,
     body: {
-      message: "feat(sync): applying Figma colors update",
+      message: 'feat(sync): applying Figma colors update',
       content: window.btoa(JSON.stringify(newContent, null, 2)),
       branch,
       committer: {
@@ -48,37 +54,48 @@ const updateColorsJsonContent = (
     }
   });
 
-const createPullRequest = (branchName, token, username, email) =>
-  makeApiCall(`pulls`, {
-    method: "POST",
+const createPullRequest = (
+  repository,
+  branchName,
+  token,
+  username,
+  email,
+  branchRef
+) =>
+  makeApiCall(`pulls`, repository, {
+    method: 'POST',
     token,
     body: {
-      title: "Updating new colors from Figma design",
+      title: 'Updating new colors from Figma design',
       head: branchName,
-      base: "master",
+      base: branchRef,
       body: `Applying colors changes made on Figma by ${username} \n [contact: ${email}]`
     }
   });
 
 const updateRemoteColors = async (
   newContent,
-  { token, sha, userName, userEmail }
+  { token, sha, userName, userEmail, repository, colorsFilepath, branchRef }
 ) => {
   const newBranchName = generateBranchName();
-  await createBranch(newBranchName, token);
+  await createBranch(newBranchName, token, repository, branchRef);
   await updateColorsJsonContent(
     sha,
     newContent,
+    repository,
+    colorsFilepath,
     newBranchName,
     token,
     userName,
     userEmail
   );
   const { html_url } = await createPullRequest(
+    repository,
     newBranchName,
     token,
     userName,
-    userEmail
+    userEmail,
+    branchRef
   );
 
   return html_url;

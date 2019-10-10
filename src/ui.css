@@ -122,4 +122,12 @@ button.ghost:focus {
 #url-copied {
   display: none;
   padding: 0 5px;
+  color: cornflowerblue;
+}
+
+#loader-panel {
+  display: none;
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
 }

@@ -1,8 +1,9 @@
-const BASE_URL = "https://api.github.com/repos/Dashlane/ui-components";
+const BASE_URL = 'https://api.github.com/repos';
 
 type Body = any;
 export const makeApiCall = async (
   url,
+  repository,
   config: { token?: string; method?: string; body?: Body } = {}
 ) => {
   const headers = config.token
@@ -12,7 +13,7 @@ export const makeApiCall = async (
     : {};
 
   const body = config.body ? JSON.stringify(config.body) : null;
-  const response = await fetch(`${BASE_URL}/${url}`, {
+  const response = await fetch(`${BASE_URL}/${repository}/${url}`, {
     ...config,
     ...{
       headers,

@@ -23,8 +23,23 @@
         /></label>
       </p>
       <p>
-        <label class="text-input-label">Token<br /><input id="token"/></label>
+        <label class="text-input-label">Github Personnal Access Token<br /><input id="token" type="password" /></label>
       </p>
+      <p>
+          <label class="text-input-label"
+            >Github Repository Name<br /><input id="repository-input" placeholder="Dashlane/ui-components"
+          /></label>
+        </p>
+      <p>
+          <label class="text-input-label"
+            >Colors file path<br /><input id="colorsfilepath-input" placeholder="src/globals/colors.json"
+          /></label>
+        </p>
+      <p>
+          <label class="text-input-label"
+            >Branch reference<br /><input id="branchref-input" placeholder="master"
+          /></label>
+        </p>
     </div>
     <div class="validate-section">
       <button type="submit" id="send">Export colors</button>
@@ -53,5 +68,8 @@
       <button id="copy-url-button">Copy the URL</button>
       <span id="url-copied">URL copied</span>
     </p>
+  </div>
+  <div id="loader-panel">
+    <div class="loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
   </div>
 </main>

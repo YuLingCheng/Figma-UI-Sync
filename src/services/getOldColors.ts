@@ -1,8 +1,9 @@
 import { makeApiCall } from './fetch';
 
-const getOldColors = async () => {
+const getOldColors = async (repository, colorsFilepath, branchRef) => {
   const encodedColorsFile = await makeApiCall(
-    'contents/src/globals/colors.json?ref=sync-colors'
+    `contents/${colorsFilepath}?ref=${branchRef}`,
+    repository
   );
 
   const decodedColorsFile = window.atob(encodedColorsFile.content);
