@@ -28,7 +28,7 @@
     return colorsFileResponse.json();
   };
   const getParsedDecodedColors = json => JSON.parse(window.atob(json.content));
-  const updateColorsJsonContent = (token, sha, newContent) =>
+  const updateColorsJsonContent = (token, sha, newContent, uxName) =>
     fetch(
       "https://api.github.com/repos/Dashlane/ui-components/contents/src/globals/colors.json",
       {
@@ -40,6 +40,10 @@
           message: "feat(sync): testing update",
           content: window.btoa(JSON.stringify(newContent, null, 2)),
           branch: "sync-colors",
+          committer: {
+            name: uxName,
+            email: "adele.gauvrit-ext@dashlane.com"
+          },
           sha
         })
       }
@@ -67,6 +71,6 @@
     colors.primary[100] = "test";
 
     const token = document.getElementById("token").value;
-    await updateColorsJsonContent(token, colorsJson.sha, colors);
+    await updateColorsJsonContent(token, colorsJson.sha, colors, uxName);
   };
 </script>
