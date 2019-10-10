@@ -72,9 +72,14 @@ button.ghost:focus {
   font-weight: bold;
   margin-right: 10px;
 }
-.info-panel {
+.info-banner {
   padding: 10px;
   background: cornflowerblue;
+  color: white;
+}
+.success-banner {
+  padding: 10px;
+  background: green;
   color: white;
 }
 .review-section-title {
@@ -116,4 +121,5 @@ button.ghost:focus {
 
 #url-copied {
   display: none;
+  padding: 0 5px;
 }

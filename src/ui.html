@@ -9,7 +9,7 @@
     request to update the project code.
   </p>
   <form id="send-style-changes">
-    <p class="info-panel">
+    <p class="info-banner">
       <span class="info-icon">?</span>Step 1/2: Make sure your information are correct
     </p>
       <div class="form-container">
@@ -31,7 +31,7 @@
     </div>
   </form>
   <div id="confirmation-panel">
-    <p class="info-panel">
+    <p class="info-banner">
       <span class="info-icon">?</span>Step 2/2: Review your changes
     </p>
     <div id="review-panel"></div>
@@ -41,11 +41,17 @@
     </div>
   </div>
   <div id="success-panel">
-    ✅ Your changes were successfully sent! Share your work with the developers
-    <a id="pull-request-link"></a>
-    <input id="pull-request-input" />
-    <br />
-    <button id="copy-url-button">Copy the URL</button>
-    <p id="url-copied">URL copied</p>
+    <p class="success-banner">
+        ✅ Your changes were successfully sent! Share your work with the developers
+    </p>
+    <div class="form-container">
+        <a id="pull-request-link" target="_blank" rel="noopener"></a>
+        <input id="pull-request-input" />
+    </div>
+    <p>
+      <button type="submit" id="back-step-1-bis" class="ghost">Back</button>
+      <button id="copy-url-button">Copy the URL</button>
+      <span id="url-copied">URL copied</span>
+    </p>
   </div>
 </main>
